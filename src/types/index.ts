@@ -42,4 +42,7 @@ export interface Poem {
   updatedAt?: Date;
 }
 
-export type UserState = User & { accessToken?: string };
+export type UserState = {
+  user?: User;
+  accessToken?: string;
+};

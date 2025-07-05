@@ -6,7 +6,7 @@ export function withProtectedRoute<P>(
   WrappedComponent: React.ComponentType<React.PropsWithChildren<P>>,
 ): React.ComponentType<React.PropsWithChildren<P>> {
   const ComponentWithAuth = (props: React.PropsWithChildren<P>) => {
-    const accessToken = useAppSelector((state) => state.user.accessToken);
+    const accessToken = useAppSelector((state) => state.auth.accessToken);
     const navigate = useNavigate();
 
     useEffect(() => {

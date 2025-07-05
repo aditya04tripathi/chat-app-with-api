@@ -1,9 +1,9 @@
+import { useGetMessages } from "@/api/mutations";
 import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { getMessageThunk } from "@/store/slices/user";
+import { useAppSelector } from "@/hooks/redux";
 import type { Message } from "@/types";
 import clsx from "clsx";
 import { SendHorizonal } from "lucide-react";
@@ -11,10 +11,11 @@ import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 
 export const IndexPage = withProtectedRoute(() => {
-  const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
+  const auth = useAppSelector((state) => state.auth);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageContent, setMessageContent] = useState<string>("");
+
+  const getMessages = useGetMessages();
 
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -41,27 +42,38 @@ export const IndexPage = withProtectedRoute(() => {
     };
   }, []);
 
+  const handleGetMessages = async () => {
+    try {
+      const messageResponse = await getMessages.mutateAsync({
+        chatroomId: auth.user!.chatroomId!,
+        token: auth.accessToken!,
+      });
+
+      return messageResponse;
+    } catch (error: unknown) {
+      // @ts-expect-error error might not have a message property
+      toast.error(error.message || "An unexpected error occurred.");
+      return undefined;
+    }
+  };
+
   useEffect(() => {
-    dispatch(
-      getMessageThunk({
-        chatroomId: user.chatroomId!,
-        token: user.accessToken!,
-      }),
-    ).then((data) => {
-      console.log(data.payload);
-      setMessages(data.payload.messages as Message[]);
+    handleGetMessages().then((data) => {
+      setMessages(data.message.messages as Message[]);
     });
   }, []);
 
   const sendMessage = () => {
     socket!.emit("message", {
-      senderId: user.id!,
-      chatroomId: user.chatroomId!,
+      senderId: auth.user!.id!,
+      chatroomId: auth.user!.chatroomId!,
       content: messageContent,
     });
 
     setMessageContent("");
   };
+
+  if (!auth.user) return;
 
   return (
     <>
@@ -89,8 +101,8 @@ export const IndexPage = withProtectedRoute(() => {
 });
 
 const MessageBubble = ({ message }: { message: Message }) => {
-  const user = useAppSelector((state) => state.user);
-  const me = message.senderId === user.id!;
+  const auth = useAppSelector((state) => state.auth);
+  const me = message.senderId === auth.user!.id!;
 
   return (
     <div
@@ -103,11 +115,12 @@ const MessageBubble = ({ message }: { message: Message }) => {
     >
       <h6
         className={clsx(
-          "text-sm",
-          me ? "text-right" : "text-left text-secondary-foreground",
+          me
+            ? "text-right text-primary-foreground"
+            : "text-left text-secondary-foreground",
         )}
       >
-        {me ? user.name : message.sender?.name || "Unknown"}
+        {me ? auth.user!.name : message.sender?.name || "Unknown"}
       </h6>
       <p className={clsx(me ? "text-right" : "text-left")}>{message.content}</p>
     </div>

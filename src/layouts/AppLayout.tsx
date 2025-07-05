@@ -6,10 +6,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { clearUser } from "@/store/slices/user";
+import { setUser } from "@/store/slices/user";
 import clsx from "clsx";
 import { BookHeart, ChevronDown, Menu, MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Sheet,
@@ -22,15 +22,11 @@ import {
 } from "@/components/ui/sheet";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = useAppSelector((state) => state.user);
+  const auth = useAppSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user && !user.onboarded) navigate("/onboarding");
-  }, []);
 
   return (
     <>
@@ -42,7 +38,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left">
               <SheetHeader>
-                <SheetTitle>Welcome {user.name}</SheetTitle>
+                <SheetTitle>Welcome {auth.user?.name || ""}</SheetTitle>
                 <SheetDescription className="text-muted-foreground">
                   This is your personal space, and also the place where you can
                   read the poems written for you!
@@ -73,7 +69,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               <SheetFooter>
                 <Button
                   onClick={() => {
-                    dispatch(clearUser());
+                    dispatch(setUser(undefined));
+                    navigate("/auth/signin");
                   }}
                   className="w-full"
                   variant="destructive"
@@ -85,7 +82,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           </Sheet>
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger className="flex items-center gap-2">
-              <h3 className="p-0 m-0">{user.name}</h3>
+              <h3 className="p-0 m-0">{auth.user?.name}</h3>
               <ChevronDown
                 size={32}
                 className={clsx(
@@ -100,12 +97,13 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               align="end"
               className="w-[320px]"
             >
-              <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-              <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+              <DropdownMenuLabel>{auth.user?.name}</DropdownMenuLabel>
+              <DropdownMenuLabel>{auth.user?.email}</DropdownMenuLabel>
               <div className="my-2 mx-2 flex items-stretch">
                 <Button
                   onClick={() => {
-                    dispatch(clearUser());
+                    dispatch(setUser(undefined));
+                    navigate("/auth/signin");
                   }}
                   className="w-full"
                   variant="destructive"

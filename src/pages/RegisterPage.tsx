@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { useAppDispatch } from "../hooks/redux";
-import { registerThunk } from "../store/slices/user";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useRegister } from "@/api/mutations";
 
 function RegisterPage() {
   const [form, setForm] = useState({
@@ -13,10 +12,10 @@ function RegisterPage() {
     password: "",
     repeatPassword: "",
   });
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const register = useRegister();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.email || !form.password || !form.repeatPassword) {
       toast.error("Please fill out the form.");
@@ -27,16 +26,21 @@ function RegisterPage() {
       return;
     }
 
-    dispatch(
-      registerThunk({
+    try {
+      const registerResponse = await register.mutateAsync({
         name: form.name,
         email: form.email,
         password: form.password,
-      }),
-    );
+      });
 
-    toast.success("Registration successful! Please sign in.");
-    navigate("/auth/signin", { replace: true });
+      toast.success(
+        registerResponse.message || "Registration successful! Please sign in.",
+      );
+      navigate("/auth/signin", { replace: true });
+    } catch (error: unknown) {
+      // @ts-expect-error error might not have a message property
+      toast.error(error.message || "An unexpected error occurred.");
+    }
   };
 
   return (

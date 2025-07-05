@@ -12,7 +12,7 @@ const persistConfig = {
 const persistedSlice = persistReducer(persistConfig, userSlice);
 export const store = configureStore({
   reducer: {
-    user: persistedSlice,
+    auth: persistedSlice,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>

@@ -1,43 +1,54 @@
 import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
-import { useAppDispatch } from "../hooks/redux";
-import { getUserThunk, loginThunk } from "../store/slices/user";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useGetUser, useLogin } from "@/api/mutations";
+import { Loader2 } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { setAccessToken, setUser } from "@/store/slices/user";
+import type { User } from "@/types";
 
 function LoginPage() {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+
+  const login = useLogin();
+  const getUser = useGetUser();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.email || !form.password) {
       toast.error("Please fill out the form.");
       return;
     }
 
-    dispatch(
-      loginThunk({
+    try {
+      const loginResponse = await login.mutateAsync({
         email: form.email,
         password: form.password,
-      }),
-    )
-      .then((data) => {
-        console.log(data.payload.access_token);
-        return dispatch(getUserThunk(data.payload.access_token));
-      })
-      .then((data) => {
-        if (data.payload.onboarded) {
-          navigate("/", { replace: true });
-        } else {
-          navigate("/onboarding", { replace: true });
-        }
       });
+
+      dispatch(setAccessToken(loginResponse.message));
+
+      const userResponse = await getUser.mutateAsync(accessToken!);
+
+      if (userResponse.message.onboarded) {
+        dispatch(setUser(userResponse.message as User));
+        navigate("/", { replace: true });
+      } else {
+        navigate("/onboarding", { replace: true });
+      }
+    } catch (error: unknown) {
+      // @ts-expect-error error might not have a message property
+      toast.error(error.message || "An unexpected error occurred.");
+    }
   };
 
   return (
@@ -69,10 +80,15 @@ function LoginPage() {
         placeholder="Enter your password..."
       />
       <div className="w-full flex flex-col md:flex-row gap-4 items-center justify-between">
-        <Button type="submit" className="md:flex-1 w-full md:w-fit">
-          Sign In
+        <Button
+          disabled={login.isPending}
+          type="submit"
+          className="md:flex-1 w-full md:w-fit"
+        >
+          {login.isPending ? <Loader2 className="animate-spin" /> : "Sign In"}
         </Button>
         <Button
+          disabled={login.isPending}
           onClick={() => navigate("/auth/signup")}
           type="button"
           className="md:flex-1 w-full md:w-fit"

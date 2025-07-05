@@ -1,54 +1,53 @@
+import { useConnectPartner, useGetUser } from "@/api/mutations";
 import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { connectPartnerThunk, getUserThunk } from "@/store/slices/user";
+import { useAppSelector } from "@/hooks/redux";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const OnboardingPage = withProtectedRoute(() => {
   const [currentTab, setCurrentTab] = useState<"partner-details" | "done">(
     "partner-details",
-    // "done",
   );
   const [partnerEmail, setPartnerEmail] = useState("");
-  const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
+  const auth = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  const connectPartner = useConnectPartner();
+  const getUser = useGetUser();
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
-  useEffect(() => {
-    dispatch(getUserThunk(user.accessToken!)).then((data) => {
-      if (data.payload.onboarded) navigate("/");
-    });
-  }, []);
-
-  const connectToPartner = () => {
+  const completeOnboarding = async () => {
     if (!partnerEmail) {
       toast.error("Please enter your partner's email address.");
       return;
     }
 
-    (() => {
-      dispatch(
-        connectPartnerThunk({
-          partnerEmail: partnerEmail,
-          token: user.accessToken!,
-        }),
-      ).then(() => {
-        dispatch(getUserThunk(user.accessToken!)).then((data) => {
-          if (data.payload.onboarded) {
-            setOnboardingDone(true);
-            toast.success("You and your partner are now connected! 🎉");
-          }
-        });
+    try {
+      await connectPartner.mutateAsync({
+        partnerEmail: partnerEmail,
+        token: auth.accessToken!,
       });
-    })();
-    setCurrentTab("done");
+      toast.success("Partner connected successfully! 🎉");
+
+      const userResult = await getUser.mutateAsync(auth.accessToken!);
+
+      if (userResult?.message?.onboarded) {
+        console.log("Onboarding done");
+        setOnboardingDone(true);
+        setCurrentTab("done");
+      } else {
+        toast.error("Onboarding not completed. Please try again.");
+      }
+    } catch (error: unknown) {
+      // @ts-expect-error error might not have a message property
+      toast.error(error?.message || "An error occurred during onboarding.");
+    }
   };
 
   return (
@@ -89,10 +88,15 @@ const OnboardingPage = withProtectedRoute(() => {
             />
             <div className="absolute bottom-0 right-0 w-full flex justify-end">
               <Button
-                onClick={connectToPartner}
+                onClick={completeOnboarding}
                 className="w-fit h-aut aspect-square"
+                disabled={getUser.isPending || connectPartner.isPending}
               >
-                <ChevronRight />
+                {getUser.isPending || connectPartner.isPending ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <ChevronRight />
+                )}
               </Button>
             </div>
           </TabsContent>
