@@ -40,7 +40,10 @@ export class AuthService {
 
     const token = await this.signToken(user.id, user.email);
 
-    return token;
+    return {
+      ok: true,
+      message: token,
+    };
   }
 
   async signup(dto: SignUpDto) {
@@ -55,26 +58,21 @@ export class AuthService {
     });
 
     return {
+      ok: true,
       message:
-        'A new user has been created successfully. Enjoy your time on TemplateAPI!',
+        "A new user has been created successfully. Enjoy your time on Aayuu's gift website!",
     };
   }
 
-  async signToken(
-    userId: string,
-    email: string,
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: string, email: string): Promise<string> {
     const payload = {
       sub: userId,
       email,
     };
 
-    return {
-      access_token: await this.jwt.signAsync(payload, {
-        secret: this.config.get('JWT_SECRET')!,
-        // expiresIn: '1h',
-      }),
-    };
+    return await this.jwt.signAsync(payload, {
+      secret: this.config.get('JWT_SECRET')!,
+    });
   }
 
   async getMe(user: User) {
@@ -96,6 +94,9 @@ export class AuthService {
     // @ts-expect-error i know what I'm doing
     delete userData.hashedPassword;
 
-    return userData;
+    return {
+      ok: true,
+      message: userData,
+    };
   }
 }

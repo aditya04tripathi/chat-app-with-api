@@ -40,7 +40,10 @@ export class ChatService {
         );
 
       console.log(JSON.stringify(chatroom, null, 2));
-      return chatroom;
+      return {
+        ok: true,
+        message: chatroom,
+      };
     } catch (error: any) {
       console.error('chat.service.ts:getAllMessagesFromChatroom()', error);
       throw new Error('Failed to retrieve messages from chatroom');

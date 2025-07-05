@@ -19,6 +19,7 @@ export class PoemsService {
     });
 
     return {
+      ok: true,
       message: poems,
     };
   }
@@ -38,6 +39,7 @@ export class PoemsService {
     if (!poem) throw new HttpException('Poem not found', HttpStatus.NOT_FOUND);
 
     return {
+      ok: true,
       message: poem,
     };
   }
