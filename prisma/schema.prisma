@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
   client   = ["native"]
 }
 
@@ -16,8 +15,40 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(cuid())
+  id             String    @id @default(uuid())
   name           String
-  email          String  @unique
-  hashedPassword String?
+  email          String    @unique
+  hashedPassword String
+  createAt       DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  chatroom       Chatroom? @relation(references: [id], fields: [chatroomId])
+  chatroomId     String?
+  message        Message[]
+  onboarded      Boolean   @default(false)
+
+  @@index([email], name: "idx_user_email")
+}
+
+model Chatroom {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  users     User[]
+  messages  Message[]
+
+  @@index([name], name: "idx_chatroom_name")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
+  chatroomId String
+  sender     User     @relation(fields: [senderId], references: [id])
+  senderId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([chatroomId], name: "idx_message_chatroom_id")
 }

@@ -2,7 +2,8 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto, SignInDto } from './dto';
 import { JwtGuard } from 'src/guards';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
+import { GetUser } from 'src/decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -20,7 +21,7 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Get('me')
-  getMe(@Body() user: User) {
+  getMe(@GetUser() user: User) {
     return this.authService.getMe(user);
   }
 }

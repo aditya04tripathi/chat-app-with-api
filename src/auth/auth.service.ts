@@ -4,7 +4,7 @@ import { SignInDto, SignUpDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
       );
     }
 
-    const passwordMatches = await argon.verify(user.hashedPassword!, password);
+    const passwordMatches = await argon.verify(user.hashedPassword, password);
     if (!passwordMatches) {
       throw new HttpException(
         'The password entered seems to be invalid. Please try again.',
@@ -84,9 +84,6 @@ export class AuthService {
       where: {
         id: userId,
       },
-      select: {
-        hashedPassword: false,
-      },
     });
 
     if (!userData) {
@@ -95,6 +92,9 @@ export class AuthService {
         HttpStatus.NOT_FOUND,
       );
     }
+
+    // @ts-expect-error i know what I'm doing
+    delete userData.hashedPassword;
 
     return userData;
   }

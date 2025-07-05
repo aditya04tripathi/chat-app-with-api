@@ -13,6 +13,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors();
+
   MulterModule.register({
     dest: './upload',
   });

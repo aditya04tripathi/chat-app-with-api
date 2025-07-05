@@ -8,6 +8,9 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { WebsocketsModule } from './websockets/websockets.module';
+import { ChatModule } from './chat/chat.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +20,9 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
     JwtModule.register({}),
     AuthModule,
+    WebsocketsModule,
+    ChatModule,
+    UserModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, PrismaService, JwtService],
