@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setUser } from "@/store/slices/user";
 import clsx from "clsx";
 import { BookHeart, ChevronDown, Menu, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Sheet,
@@ -21,12 +21,22 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-function AppLayout({ children }: { children: React.ReactNode }) {
+function AppLayout({
+  children,
+}: {
+  children: React.ReactNode[] | React.ReactNode;
+}) {
   const auth = useAppSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!auth.accessToken || !auth.user) {
+      navigate("/auth/signin", { replace: true });
+    }
+  }, []);
 
   return (
     <>

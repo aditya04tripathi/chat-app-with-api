@@ -2,6 +2,7 @@ import { useGetPoemById } from "@/api/queries";
 import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
+import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 
 export const OnePoemPage = withProtectedRoute(() => {
@@ -18,6 +19,13 @@ export const OnePoemPage = withProtectedRoute(() => {
 
   return (
     <ScrollArea className="h-full w-full">
+      <Helmet>
+        <title>{poemById.data.message!.title} | I ❤️ YOU AAYUU</title>
+        <meta
+          name="description"
+          content={`Read the poem "${poemById.data.message!.title}" by ${poemById.data.message!.author!.name}.`}
+        />
+      </Helmet>
       <h1>{poemById.data.message!.title}</h1>
       <p className="text-sm text-muted-foreground">
         Written on{" "}

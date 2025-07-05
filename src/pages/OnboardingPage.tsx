@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppSelector } from "@/hooks/redux";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -52,6 +53,13 @@ const OnboardingPage = withProtectedRoute(() => {
 
   return (
     <div className="max-h-screen px-10 md:px-0 w-screen h-screen flex flex-col gap-4 items-center justify-center">
+      <Helmet>
+        <title>Onboarding | I ❤️ YOU AAYUU</title>
+        <meta
+          name="description"
+          content="Complete your onboarding by connecting with your partner."
+        />
+      </Helmet>
       <Tabs
         className="w-full md:w-1/2 h-1/2"
         value={currentTab}

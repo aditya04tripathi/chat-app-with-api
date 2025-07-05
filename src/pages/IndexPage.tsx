@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
+import { toast } from "sonner";
 
 export const IndexPage = withProtectedRoute(() => {
   const auth = useAppSelector((state) => state.auth);

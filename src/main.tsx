@@ -10,6 +10,7 @@ import OnboardingPage from "./pages/OnboardingPage.tsx";
 import AppLayout from "./layouts/AppLayout.tsx";
 import { PoemsPage } from "./pages/PoemsPage.tsx";
 import { OnePoemPage } from "./pages/OnePoemPage.tsx";
+import { Helmet } from "react-helmet";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -19,6 +20,13 @@ createRoot(document.getElementById("root")!).render(
           path="/"
           element={
             <AppLayout>
+              <Helmet>
+                <title>Chat 💬 | I ❤️ YOU AAYUU</title>
+                <meta
+                  name="description"
+                  content="Welcome to Aayuu's gift. Start chatting with your partner!"
+                />
+              </Helmet>
               <IndexPage />
             </AppLayout>
           }
@@ -27,6 +35,13 @@ createRoot(document.getElementById("root")!).render(
           path="/poems"
           element={
             <AppLayout>
+              <Helmet>
+                <title>Poems 📖 | I ❤️ YOU AAYUU</title>
+                <meta
+                  name="description"
+                  content="Explore a collection of beautiful poems."
+                />
+              </Helmet>
               <PoemsPage />
             </AppLayout>
           }
@@ -40,17 +55,16 @@ createRoot(document.getElementById("root")!).render(
           }
         />
         <Route
-          path="/poems"
-          element={
-            <AppLayout>
-              <PoemsPage />
-            </AppLayout>
-          }
-        />
-        <Route
           path="/auth/signin"
           element={
             <AuthLayout>
+              <Helmet>
+                <title>Sign In | I ❤️ YOU AAYUU</title>
+                <meta
+                  name="description"
+                  content="Sign in to your account to continue using the app."
+                />
+              </Helmet>
               <LoginPage />
             </AuthLayout>
           }
@@ -59,6 +73,13 @@ createRoot(document.getElementById("root")!).render(
           path="/auth/signup"
           element={
             <AuthLayout>
+              <Helmet>
+                <title>Sign Up | I ❤️ YOU AAYUU</title>
+                <meta
+                  name="description"
+                  content="Create an account to start using the app."
+                />
+              </Helmet>
               <RegisterPage />
             </AuthLayout>
           }
