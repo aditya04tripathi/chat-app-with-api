@@ -11,6 +11,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { WebsocketsModule } from './websockets/websockets.module';
 import { ChatModule } from './chat/chat.module';
 import { UserModule } from './user/user.module';
+import { PoemsModule } from './poems/poems.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     WebsocketsModule,
     ChatModule,
     UserModule,
+    PoemsModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, PrismaService, JwtService],
