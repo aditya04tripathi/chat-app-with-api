@@ -32,4 +32,14 @@ export interface Message {
   senderName?: string;
 }
 
+export interface Poem {
+  id?: string;
+  title?: string;
+  content?: string;
+  authorId?: string;
+  author?: { name?: string };
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export type UserState = User & { accessToken?: string };

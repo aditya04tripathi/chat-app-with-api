@@ -2,19 +2,29 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { clearUser } from "@/store/slices/user";
 import clsx from "clsx";
-import { ChevronDown, Menu } from "lucide-react";
+import { BookHeart, ChevronDown, Menu, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   const user = useAppSelector((state) => state.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -26,7 +36,53 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     <>
       <nav className="px-5 md:px-0 h-24 border-b flex items-center justify-between">
         <div className="container mx-auto flex items-center justify-between">
-          <Menu size={32} />
+          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger>
+              <Menu />
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>Welcome {user.name}</SheetTitle>
+                <SheetDescription className="text-muted-foreground">
+                  This is your personal space, and also the place where you can
+                  read the poems written for you!
+                </SheetDescription>
+              </SheetHeader>
+              <div className="px-4 flex flex-col justify-center items-stretch gap-4">
+                <Button
+                  onClick={() => {
+                    navigate("/");
+                    setSheetOpen(false);
+                  }}
+                  className="flex justify-between items-center"
+                >
+                  <span>Chat</span>
+                  <MessageCircle />
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/poems");
+                    setSheetOpen(false);
+                  }}
+                  className="flex justify-between items-center"
+                >
+                  <span>Poems</span>
+                  <BookHeart />
+                </Button>
+              </div>
+              <SheetFooter>
+                <Button
+                  onClick={() => {
+                    dispatch(clearUser());
+                  }}
+                  className="w-full"
+                  variant="destructive"
+                >
+                  Sign Out
+                </Button>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger className="flex items-center gap-2">
               <h3 className="p-0 m-0">{user.name}</h3>
@@ -44,8 +100,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
               align="end"
               className="w-[320px]"
             >
-              <DropdownMenuItem>{user.email}</DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+              <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+              <div className="my-2 mx-2 flex items-stretch">
                 <Button
                   onClick={() => {
                     dispatch(clearUser());
@@ -55,12 +112,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
                 >
                   Sign Out
                 </Button>
-              </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </nav>
-      <main className="h-[calc(100vh-6rem)] fixed top-24 left-0 bottom-0 right-0">
+      <main className="container mx-auto h-[calc(100vh-6rem)] py-2.5 fixed top-24 left-0 bottom-0 right-0">
         {children}
       </main>
     </>

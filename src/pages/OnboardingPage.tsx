@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { connectPartnerThunk, getUserThunk } from "@/store/slices/user";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -21,6 +21,12 @@ const OnboardingPage = withProtectedRoute(() => {
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
+  useEffect(() => {
+    dispatch(getUserThunk(user.accessToken!)).then((data) => {
+      if (data.payload.onboarded) navigate("/");
+    });
+  }, []);
+
   const connectToPartner = () => {
     if (!partnerEmail) {
       toast.error("Please enter your partner's email address.");
@@ -33,13 +39,13 @@ const OnboardingPage = withProtectedRoute(() => {
           partnerEmail: partnerEmail,
           token: user.accessToken!,
         }),
-      );
-      dispatch(getUserThunk(user.accessToken!)).then((data) => {
-        console.log("PAYLOAD", data.payload);
-        if (data.payload.onboarded) {
-          setOnboardingDone(true);
-          toast.success("You and your partner are now connected! 🎉");
-        }
+      ).then(() => {
+        dispatch(getUserThunk(user.accessToken!)).then((data) => {
+          if (data.payload.onboarded) {
+            setOnboardingDone(true);
+            toast.success("You and your partner are now connected! 🎉");
+          }
+        });
       });
     })();
     setCurrentTab("done");

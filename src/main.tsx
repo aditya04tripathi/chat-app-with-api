@@ -8,6 +8,8 @@ import AuthLayout from "./layouts/AuthLayout.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import OnboardingPage from "./pages/OnboardingPage.tsx";
 import AppLayout from "./layouts/AppLayout.tsx";
+import { PoemsPage } from "./pages/PoemsPage.tsx";
+import { OnePoemPage } from "./pages/OnePoemPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -18,6 +20,30 @@ createRoot(document.getElementById("root")!).render(
           element={
             <AppLayout>
               <IndexPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/poems"
+          element={
+            <AppLayout>
+              <PoemsPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/poems/:poemId"
+          element={
+            <AppLayout>
+              <OnePoemPage />
+            </AppLayout>
+          }
+        />
+        <Route
+          path="/poems"
+          element={
+            <AppLayout>
+              <PoemsPage />
             </AppLayout>
           }
         />

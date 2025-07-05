@@ -65,7 +65,7 @@ export const IndexPage = withProtectedRoute(() => {
 
   return (
     <>
-      <ScrollArea className="px-5 md:px-0 h-[calc(100vh-11.625rem)] py-2.5 w-full">
+      <ScrollArea className="px-5 md:px-0 h-[calc(100vh-11.625rem)] w-full">
         <div className="container mx-auto flex flex-col gap-2">
           {messages.map((message: Message) => (
             <MessageBubble message={message} />
