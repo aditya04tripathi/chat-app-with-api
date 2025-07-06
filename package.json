@@ -8,7 +8,7 @@
   "scripts": {
     "db:dev:reset": "prisma migrate reset --force --skip-generate",
     "db:dev:generate": "prisma generate",
-    "db:dev:migrate": "prisma migrate dev --name init --create-only",
+    "db:dev:migrate": "prisma migrate dev --name init",
     "db:dev:ready-for-deployment": "npm run db:dev:reset && npm run db:dev:migrate && npm run db:dev:generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
