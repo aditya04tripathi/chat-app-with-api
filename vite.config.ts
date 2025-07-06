@@ -10,7 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    port: 8080,
+  },
   preview: {
-    allowedHosts: ["cutie.luxorweb.space"],
+    allowedHosts: ["aayuu.up.railway.app"],
+    port: 8080,
   },
 });
