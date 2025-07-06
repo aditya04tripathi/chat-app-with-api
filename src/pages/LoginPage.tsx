@@ -40,16 +40,18 @@ function LoginPage() {
         .then((res) => {
           console.log("loginResponse", res.message);
           dispatch(setAccessToken(res.message));
+          return res.message;
+        })
+        .then((accessToken) => {
+          getUser.mutateAsync(accessToken!).then((userResponse) => {
+            if (userResponse.message.onboarded) {
+              dispatch(setUser(userResponse.message as User));
+              navigate("/", { replace: true });
+            } else {
+              navigate("/onboarding", { replace: true });
+            }
+          });
         });
-
-      const userResponse = await getUser.mutateAsync(accessToken!);
-
-      if (userResponse.message.onboarded) {
-        dispatch(setUser(userResponse.message as User));
-        navigate("/", { replace: true });
-      } else {
-        navigate("/onboarding", { replace: true });
-      }
     } catch (error: unknown) {
       console.error("loginError", error);
       // @ts-expect-error error might not have a message property
