@@ -57,7 +57,7 @@ const OnboardingPage = withProtectedRoute(() => {
   return (
     <div className="max-h-screen px-10 md:px-0 w-screen h-screen flex flex-col gap-4 items-center justify-center">
       <Helmet>
-        <title>Onboarding | I ❤️ YOU AAYUU</title>
+        <title>Onboarding | I ❤️ YOU</title>
         <meta name="description" content="Complete your onboarding by connecting with your partner." />
       </Helmet>
       <Tabs className="w-full md:w-1/2 h-1/2" value={currentTab} onValueChange={(tabValue) => setCurrentTab(tabValue as "partner-details" | "done")}>

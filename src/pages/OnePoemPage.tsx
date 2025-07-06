@@ -20,27 +20,19 @@ export const OnePoemPage = withProtectedRoute(() => {
   return (
     <ScrollArea className="h-full w-full">
       <Helmet>
-        <title>{poemById.data.message!.title} | I ❤️ YOU AAYUU</title>
-        <meta
-          name="description"
-          content={`Read the poem "${poemById.data.message!.title}" by ${poemById.data.message!.author!.name}.`}
-        />
+        <title>{poemById.data.message!.title} | I ❤️ YOU</title>
+        <meta name="description" content={`Read the poem "${poemById.data.message!.title}" by ${poemById.data.message!.author!.name}.`} />
       </Helmet>
       <h1>{poemById.data.message!.title}</h1>
       <p className="text-sm text-muted-foreground">
         Written on{" "}
-        {new Date(poemById.data.message!.createdAt!).toLocaleDateString(
-          "en-IN",
-          {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          },
-        )}
+        {new Date(poemById.data.message!.createdAt!).toLocaleDateString("en-IN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
       </p>
-      <p className="py-4 whitespace-pre-line">
-        {poemById.data.message.content!}
-      </p>
+      <p className="py-4 whitespace-pre-line">{poemById.data.message.content!}</p>
       <p>- {poemById.data.message.author!.name}</p>
     </ScrollArea>
   );

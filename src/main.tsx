@@ -21,8 +21,8 @@ createRoot(document.getElementById("root")!).render(
           element={
             <AppLayout>
               <Helmet>
-                <title>Chat 💬 | I ❤️ YOU AAYUU</title>
-                <meta name="description" content="Welcome to Aayuu's gift. Start chatting with your partner!" />
+                <title>Chat 💬 | I ❤️ YOU</title>
+                <meta name="description" content="Welcome to my crush's gift. Start chatting with your partner!" />
               </Helmet>
               <IndexPage />
             </AppLayout>
@@ -33,7 +33,7 @@ createRoot(document.getElementById("root")!).render(
           element={
             <AppLayout>
               <Helmet>
-                <title>Poems 📖 | I ❤️ YOU AAYUU</title>
+                <title>Poems 📖 | I ❤️ YOU</title>
                 <meta name="description" content="Explore a collection of beautiful poems." />
               </Helmet>
               <PoemsPage />
@@ -53,7 +53,7 @@ createRoot(document.getElementById("root")!).render(
           element={
             <AuthLayout>
               <Helmet>
-                <title>Sign In | I ❤️ YOU AAYUU</title>
+                <title>Sign In | I ❤️ YOU</title>
                 <meta name="description" content="Sign in to your account to continue using the app." />
               </Helmet>
               <LoginPage />
@@ -65,7 +65,7 @@ createRoot(document.getElementById("root")!).render(
           element={
             <AuthLayout>
               <Helmet>
-                <title>Sign Up | I ❤️ YOU AAYUU</title>
+                <title>Sign Up | I ❤️ YOU</title>
                 <meta name="description" content="Create an account to start using the app." />
               </Helmet>
               <RegisterPage />
