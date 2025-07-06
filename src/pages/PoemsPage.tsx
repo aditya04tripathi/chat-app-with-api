@@ -2,26 +2,11 @@ import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Poem } from "@/types";
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Ellipsis, Loader2, Plus, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/hooks/redux";
@@ -52,10 +37,7 @@ export const PoemsPage = withProtectedRoute(() => {
         token: auth.accessToken!,
       });
 
-      toast.success(
-        deletePoemResponse.message ||
-          "Poem deleted successfully! We will miss it! 😢",
-      );
+      toast.success(deletePoemResponse.message || "Poem deleted successfully! We will miss it! 😢");
 
       queryClient.invalidateQueries({
         queryKey: ["getPoems"],
@@ -74,10 +56,7 @@ export const PoemsPage = withProtectedRoute(() => {
         token: auth.accessToken!,
       });
 
-      toast.success(
-        addPoemResponse.message ||
-          "Kudos! Poem added, add more to show your love, how much you care about them! ❤️",
-      );
+      toast.success(addPoemResponse.message || "Kudos! Poem added, add more to show your love, how much you care about them! ❤️");
 
       queryClient.invalidateQueries({
         queryKey: ["getPoems"],
@@ -114,23 +93,11 @@ export const PoemsPage = withProtectedRoute(() => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add a new poem</DialogTitle>
-              <DialogDescription>
-                Add a new poem, and show your loved one how much you care about
-                them.
-              </DialogDescription>
+              <DialogDescription>Add a new poem, and show your loved one how much you care about them.</DialogDescription>
             </DialogHeader>
             <div className="flex flex-col items-stretch justify-center gap-4">
-              <Input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Give your creation a title..."
-              />
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                rows={10}
-                placeholder="Let your inner author fly..."
-              />
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Give your creation a title..." />
+              <Textarea value={content} onChange={(e) => setContent(e.target.value)} rows={10} placeholder="Let your inner author fly..." />
             </div>
             <DialogFooter>
               <Button onClick={handleAddPoem}>Add poem</Button>
@@ -140,7 +107,7 @@ export const PoemsPage = withProtectedRoute(() => {
       </div>
 
       {getPoems.data.message.length === 0 ? (
-        <div className="flex items-center justify-center h-full">
+        <div className="my-10 flex items-center justify-center h-full">
           <p className="text-gray-500">No poems available</p>
         </div>
       ) : (
@@ -162,20 +129,11 @@ export const PoemsPage = withProtectedRoute(() => {
                 <p>{poem!.content!.slice(0, 100)}...</p>
               </CardContent>
               <CardFooter className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <Button
-                  className="flex-1 w-full md:w-fit"
-                  onClick={() =>
-                    navigate(`/poems/${poem.id}`, { state: { poem } })
-                  }
-                >
+                <Button className="flex-1 w-full md:w-fit" onClick={() => navigate(`/poems/${poem.id}`, { state: { poem } })}>
                   Read More <Ellipsis />
                 </Button>
                 {poem!.authorId === auth.user!.id && (
-                  <Button
-                    className="flex-1 w-full md:w-fit"
-                    variant="destructive"
-                    onClick={() => handleDeletePoem(poem.id!)}
-                  >
+                  <Button className="flex-1 w-full md:w-fit" variant="destructive" onClick={() => handleDeletePoem(poem.id!)}>
                     Delete <Trash2 />
                   </Button>
                 )}

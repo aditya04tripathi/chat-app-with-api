@@ -85,18 +85,22 @@ export const IndexPage = withProtectedRoute(() => {
           ))}
         </div>
       </ScrollArea>
-      <div className="px-5 md:px-0 flex gap-2 items-center justify-center fixed bottom-0 right-0 left-0 h-20 border-t">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (messageContent.trim() === "") return toast.error("Message cannot be empty.");
+          sendMessage();
+          setMessageContent("");
+        }}
+        className="px-5 md:px-0 flex gap-2 items-center justify-center fixed bottom-0 right-0 left-0 h-20 border-t"
+      >
         <div className="container mx-auto flex gap-2 items-center w-full">
-          <Input
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-            placeholder="Type your heart out..."
-          />
-          <Button onClick={sendMessage}>
+          <Input value={messageContent} onChange={(e) => setMessageContent(e.target.value)} placeholder="Type your heart out..." />
+          <Button type="submit">
             <SendHorizonal />
           </Button>
         </div>
-      </div>
+      </form>
     </>
   );
 });
@@ -106,23 +110,8 @@ const MessageBubble = ({ message }: { message: Message }) => {
   const me = message.senderId === auth.user!.id!;
 
   return (
-    <div
-      className={clsx(
-        "max-w-xl w-full px-5 py-2.5 rounded",
-        me
-          ? "rounded-br-none ml-auto bg-primary text-primary-foreground"
-          : "rounded-bl-none bg-secondary text-secondary-foreground",
-      )}
-    >
-      <h6
-        className={clsx(
-          me
-            ? "text-right text-primary-foreground"
-            : "text-left text-secondary-foreground",
-        )}
-      >
-        {me ? auth.user!.name : message.sender?.name || "Unknown"}
-      </h6>
+    <div className={clsx("max-w-xl w-full px-5 py-2.5 rounded", me ? "rounded-br-none ml-auto bg-primary text-primary-foreground" : "rounded-bl-none bg-secondary text-secondary-foreground")}>
+      <h6 className={clsx(me ? "text-right text-primary-foreground" : "text-left text-secondary-foreground")}>{me ? auth.user!.name : message.sender?.name || "Unknown"}</h6>
       <p className={clsx(me ? "text-right" : "text-left")}>{message.content}</p>
     </div>
   );

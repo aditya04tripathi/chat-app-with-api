@@ -22,10 +22,7 @@ createRoot(document.getElementById("root")!).render(
             <AppLayout>
               <Helmet>
                 <title>Chat 💬 | I ❤️ YOU AAYUU</title>
-                <meta
-                  name="description"
-                  content="Welcome to Aayuu's gift. Start chatting with your partner!"
-                />
+                <meta name="description" content="Welcome to Aayuu's gift. Start chatting with your partner!" />
               </Helmet>
               <IndexPage />
             </AppLayout>
@@ -37,10 +34,7 @@ createRoot(document.getElementById("root")!).render(
             <AppLayout>
               <Helmet>
                 <title>Poems 📖 | I ❤️ YOU AAYUU</title>
-                <meta
-                  name="description"
-                  content="Explore a collection of beautiful poems."
-                />
+                <meta name="description" content="Explore a collection of beautiful poems." />
               </Helmet>
               <PoemsPage />
             </AppLayout>
@@ -60,10 +54,7 @@ createRoot(document.getElementById("root")!).render(
             <AuthLayout>
               <Helmet>
                 <title>Sign In | I ❤️ YOU AAYUU</title>
-                <meta
-                  name="description"
-                  content="Sign in to your account to continue using the app."
-                />
+                <meta name="description" content="Sign in to your account to continue using the app." />
               </Helmet>
               <LoginPage />
             </AuthLayout>
@@ -75,10 +66,7 @@ createRoot(document.getElementById("root")!).render(
             <AuthLayout>
               <Helmet>
                 <title>Sign Up | I ❤️ YOU AAYUU</title>
-                <meta
-                  name="description"
-                  content="Create an account to start using the app."
-                />
+                <meta name="description" content="Create an account to start using the app." />
               </Helmet>
               <RegisterPage />
             </AuthLayout>
@@ -87,5 +75,5 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/onboarding" element={<OnboardingPage />} />
       </Routes>
     </RootProvider>
-  </BrowserRouter>,
+  </BrowserRouter>
 );

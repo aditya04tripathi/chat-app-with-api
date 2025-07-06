@@ -1,31 +1,14 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { setUser } from "@/store/slices/user";
+import { setAccessToken, setUser } from "@/store/slices/user";
 import clsx from "clsx";
 import { BookHeart, ChevronDown, Menu, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-function AppLayout({
-  children,
-}: {
-  children: React.ReactNode[] | React.ReactNode;
-}) {
+function AppLayout({ children }: { children: React.ReactNode[] | React.ReactNode }) {
   const auth = useAppSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -49,10 +32,7 @@ function AppLayout({
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle>Welcome {auth.user?.name || ""}</SheetTitle>
-                <SheetDescription className="text-muted-foreground">
-                  This is your personal space, and also the place where you can
-                  read the poems written for you!
-                </SheetDescription>
+                <SheetDescription className="text-muted-foreground">This is your personal space, and also the place where you can read the poems written for you!</SheetDescription>
               </SheetHeader>
               <div className="px-4 flex flex-col justify-center items-stretch gap-4">
                 <Button
@@ -80,6 +60,7 @@ function AppLayout({
                 <Button
                   onClick={() => {
                     dispatch(setUser(undefined));
+                    dispatch(setAccessToken(undefined));
                     navigate("/auth/signin");
                   }}
                   className="w-full"
@@ -93,26 +74,16 @@ function AppLayout({
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger className="flex items-center gap-2">
               <h3 className="p-0 m-0">{auth.user?.name}</h3>
-              <ChevronDown
-                size={32}
-                className={clsx(
-                  dropdownOpen
-                    ? "rotate-180 transition-transform"
-                    : "transition-transform",
-                )}
-              />
+              <ChevronDown size={32} className={clsx(dropdownOpen ? "rotate-180 transition-transform" : "transition-transform")} />
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side="bottom"
-              align="end"
-              className="w-[320px]"
-            >
+            <DropdownMenuContent side="bottom" align="end" className="w-[320px]">
               <DropdownMenuLabel>{auth.user?.name}</DropdownMenuLabel>
               <DropdownMenuLabel>{auth.user?.email}</DropdownMenuLabel>
               <div className="my-2 mx-2 flex items-stretch">
                 <Button
                   onClick={() => {
                     dispatch(setUser(undefined));
+                    dispatch(setAccessToken(undefined));
                     navigate("/auth/signin");
                   }}
                   className="w-full"
@@ -125,9 +96,7 @@ function AppLayout({
           </DropdownMenu>
         </div>
       </nav>
-      <main className="container mx-auto h-[calc(100vh-6rem)] py-2.5 fixed top-24 left-0 bottom-0 right-0">
-        {children}
-      </main>
+      <main className="container mx-auto h-[calc(100vh-6rem)] py-2.5 fixed top-24 left-0 bottom-0 right-0">{children}</main>
     </>
   );
 }
