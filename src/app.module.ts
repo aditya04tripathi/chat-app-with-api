@@ -10,6 +10,7 @@ import { WebsocketsModule } from './websockets/websockets.module';
 import { ChatModule } from './chat/chat.module';
 import { UserModule } from './user/user.module';
 import { PoemsModule } from './poems/poems.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PoemsModule } from './poems/poems.module';
     ChatModule,
     UserModule,
     PoemsModule,
+    MessagesModule,
   ],
   providers: [AppService, AuthService, PrismaService, JwtService],
 })
