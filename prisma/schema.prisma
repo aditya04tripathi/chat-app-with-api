@@ -6,32 +6,29 @@
 
 generator client {
   provider = "prisma-client-js"
-  client   = ["native"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id             String    @id @default(uuid())
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   email          String    @unique
   hashedPassword String
   createAt       DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   chatroom       Chatroom? @relation(references: [id], fields: [chatroomId])
-  chatroomId     String?
+  chatroomId     String?   @db.ObjectId
   message        Message[]
   onboarded      Boolean   @default(false)
   poems          Poem[]    @relation("PoemToUser")
-
-  @@index([email], name: "idx_user_email")
 }
 
 model Chatroom {
-  id        String    @id @default(uuid())
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -42,12 +39,12 @@ model Chatroom {
 }
 
 model Message {
-  id         String   @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   content    String
   chatroom   Chatroom @relation(fields: [chatroomId], references: [id])
-  chatroomId String
+  chatroomId String   @db.ObjectId
   sender     User     @relation(fields: [senderId], references: [id])
-  senderId   String
+  senderId   String   @db.ObjectId
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -55,11 +52,11 @@ model Message {
 }
 
 model Poem {
-  id        String   @id @default(uuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   content   String
   author    User     @relation("PoemToUser", fields: [authorId], references: [id])
-  authorId  String
+  authorId  String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
