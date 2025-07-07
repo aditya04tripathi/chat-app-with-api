@@ -111,11 +111,16 @@ export const IndexPage = withProtectedRoute(() => {
           sendMessage();
           setMessageContent("");
         }}
-        className="px-5 md:px-0 flex gap-2 items-center justify-center fixed bottom-0 right-0 left-0 h-20 border-t"
+        className="px-5 md:px-0 flex gap-2 items-center justify-center fixed bottom-0 right-0 left-0 h-20 border-t bg-background"
+        style={{
+          zIndex: 50,
+          touchAction: "manipulation",
+        }}
+        autoComplete="off"
       >
         <div className="container mx-auto flex gap-2 items-center w-full">
-          <Input value={messageContent} onChange={(e) => setMessageContent(e.target.value)} placeholder="Type your heart out..." />
-          <Button type="submit">
+          <Input value={messageContent} onChange={(e) => setMessageContent(e.target.value)} placeholder="Type your heart out..." inputMode="text" autoComplete="off" autoCorrect="on" spellCheck={true} enterKeyHint="send" className="flex-1" />
+          <Button type="submit" tabIndex={0}>
             <SendHorizonal />
           </Button>
         </div>
