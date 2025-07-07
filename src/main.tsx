@@ -72,7 +72,18 @@ createRoot(document.getElementById("root")!).render(
             </AuthLayout>
           }
         />
-        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route
+          path="/onboarding"
+          element={
+            <AppLayout onboarding>
+              <Helmet>
+                <title>Onboarding | I ❤️ YOU</title>
+                <meta name="description" content="Complete your onboarding by connecting with your partner." />
+              </Helmet>
+              <OnboardingPage />
+            </AppLayout>
+          }
+        />
       </Routes>
     </RootProvider>
   </BrowserRouter>

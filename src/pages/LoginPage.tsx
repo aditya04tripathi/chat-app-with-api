@@ -8,8 +8,6 @@ import { Loader2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setAccessToken, setUser } from "@/store/slices/user";
 import type { User } from "@/types";
-import useSwr from "swr";
-import axios from "axios";
 
 function LoginPage() {
   const [form, setForm] = useState({
@@ -18,8 +16,7 @@ function LoginPage() {
   });
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const auth = useAppSelector((state) => state.auth);
 
   const login = useLogin();
   const getUser = useGetUser();
@@ -38,19 +35,26 @@ function LoginPage() {
           password: form.password,
         })
         .then((res) => {
-          console.log("loginResponse", res.message);
-          dispatch(setAccessToken(res.message));
           return res.message;
         })
         .then((accessToken) => {
-          getUser.mutateAsync(accessToken!).then((userResponse) => {
-            if (userResponse.message.onboarded) {
+          getUser
+            .mutateAsync(accessToken!)
+            .then((userResponse) => {
+              dispatch(setAccessToken(accessToken));
               dispatch(setUser(userResponse.message as User));
-              navigate("/", { replace: true });
-            } else {
-              navigate("/onboarding", { replace: true });
-            }
-          });
+              if (userResponse.message.onboarded) {
+                toast.success("Welcome back! 🥰");
+                return navigate("/", { replace: true });
+              } else {
+                toast.success("Welcome back! 🥰 Please complete your onboarding.");
+                return navigate("/onboarding", { replace: true });
+              }
+            })
+            .then(() => {
+              console.log("accessToken", auth.accessToken);
+              console.log("user", auth.user);
+            });
         });
     } catch (error: unknown) {
       console.error("loginError", error);

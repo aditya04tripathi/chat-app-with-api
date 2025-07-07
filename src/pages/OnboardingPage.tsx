@@ -8,7 +8,6 @@ import { setUser } from "@/store/slices/user";
 import type { User } from "@/types";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -55,11 +54,7 @@ const OnboardingPage = withProtectedRoute(() => {
   };
 
   return (
-    <div className="max-h-screen px-10 md:px-0 w-screen h-screen flex flex-col gap-4 items-center justify-center">
-      <Helmet>
-        <title>Onboarding | I ❤️ YOU</title>
-        <meta name="description" content="Complete your onboarding by connecting with your partner." />
-      </Helmet>
+    <div className="max-h-full px-10 md:px-0 w-screen h-full flex flex-col gap-4 items-center justify-center">
       <Tabs className="w-full md:w-1/2 h-1/2" value={currentTab} onValueChange={(tabValue) => setCurrentTab(tabValue as "partner-details" | "done")}>
         <TabsList className="w-full">
           <TabsTrigger disabled={currentTab !== "partner-details"} value="partner-details">

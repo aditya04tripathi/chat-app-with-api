@@ -2,12 +2,12 @@ import { useGetMessages } from "@/api/mutations";
 import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, type ScrollAreaRef } from "@/components/ui/scroll-area";
 import { useAppSelector } from "@/hooks/redux";
 import type { Message } from "@/types";
 import clsx from "clsx";
 import { SendHorizonal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import { toast } from "sonner";
 
@@ -15,10 +15,19 @@ export const IndexPage = withProtectedRoute(() => {
   const auth = useAppSelector((state) => state.auth);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageContent, setMessageContent] = useState<string>("");
+  const scrollToBottomRef = useRef<ScrollAreaRef>(null);
 
   const getMessages = useGetMessages();
 
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  const scrollToBottom = () => {
+    scrollToBottomRef.current?.scrollToBottom();
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const connectSocket = () => {
     const socket = io(import.meta.env.VITE_BASE_URL);
@@ -27,7 +36,6 @@ export const IndexPage = withProtectedRoute(() => {
     console.log("socket conn done");
 
     socket.on("message", (msg: Message) => {
-      console.log("New message received:", msg);
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
   };
@@ -78,10 +86,10 @@ export const IndexPage = withProtectedRoute(() => {
 
   return (
     <>
-      <ScrollArea className="px-5 md:px-0 h-[calc(100vh-11.625rem)] w-full">
+      <ScrollArea ref={scrollToBottomRef} className="md:px-5 px-5 h-[calc(100vh-11.625rem)] w-full overflow-y-auto">
         <div className="container mx-auto flex flex-col gap-2">
           {messages.map((message: Message) => (
-            <MessageBubble message={message} />
+            <MessageBubble key={message.id} message={message} />
           ))}
         </div>
       </ScrollArea>
@@ -110,9 +118,20 @@ const MessageBubble = ({ message }: { message: Message }) => {
   const me = message.senderId === auth.user!.id!;
 
   return (
-    <div className={clsx("max-w-xl w-full px-5 py-2.5 rounded", me ? "rounded-br-none ml-auto bg-primary text-primary-foreground" : "rounded-bl-none bg-secondary text-secondary-foreground")}>
-      <h6 className={clsx(me ? "text-right text-primary-foreground" : "text-left text-secondary-foreground")}>{me ? auth.user!.name : message.sender?.name || "Unknown"}</h6>
-      <p className={clsx(me ? "text-right" : "text-left")}>{message.content}</p>
+    <div className={clsx("w-full flex flex-col", me ? "items-end" : "items-start")}>
+      <div className={clsx("max-w-xl w-full px-5 py-2.5 rounded", me ? "rounded-br-none ml-auto bg-primary text-primary-foreground" : "rounded-bl-none bg-secondary text-secondary-foreground")}>
+        <div className={clsx("flex items-center gap-2 mb-2", me ? "justify-end" : "justify-start")}>
+          <h6 className={clsx(me ? "text-right text-primary-foreground" : "text-left text-secondary-foreground")}>{me ? auth.user!.name : message.sender?.name || "Unknown"}</h6>
+        </div>
+        <p className={clsx(me ? "text-right" : "text-left")}>{message.content}</p>
+      </div>
+      {me && (
+        <div className="flex justify-end">
+          <Button disabled className="text-sm text-destructive underline" variant={"link"}>
+            Delete this message (not implemented yet)
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

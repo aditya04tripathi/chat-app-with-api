@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-function AppLayout({ children }: { children: React.ReactNode[] | React.ReactNode }) {
+function AppLayout({ children, onboarding = false }: { children: React.ReactNode[] | React.ReactNode; onboarding?: boolean }) {
   const auth = useAppSelector((state) => state.auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -25,52 +25,56 @@ function AppLayout({ children }: { children: React.ReactNode[] | React.ReactNode
     <>
       <nav className="px-5 md:px-0 h-24 border-b flex items-center justify-between">
         <div className="container mx-auto flex items-center justify-between">
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger>
-              <Menu />
-            </SheetTrigger>
-            <SheetContent side="left">
-              <SheetHeader>
-                <SheetTitle>Welcome {auth.user?.name || ""}</SheetTitle>
-                <SheetDescription className="text-muted-foreground">This is your personal space, and also the place where you can read the poems written for you!</SheetDescription>
-              </SheetHeader>
-              <div className="px-4 flex flex-col justify-center items-stretch gap-4">
-                <Button
-                  onClick={() => {
-                    navigate("/");
-                    setSheetOpen(false);
-                  }}
-                  className="flex justify-between items-center"
-                >
-                  <span>Chat</span>
-                  <MessageCircle />
-                </Button>
-                <Button
-                  onClick={() => {
-                    navigate("/poems");
-                    setSheetOpen(false);
-                  }}
-                  className="flex justify-between items-center"
-                >
-                  <span>Poems</span>
-                  <BookHeart />
-                </Button>
-              </div>
-              <SheetFooter>
-                <Button
-                  onClick={() => {
-                    dispatch(setUser(undefined));
-                    dispatch(setAccessToken(undefined));
-                    navigate("/auth/signin");
-                  }}
-                  className="w-full"
-                  variant="destructive"
-                >
-                  Sign Out
-                </Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+          {!onboarding ? (
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger>
+                <Menu />
+              </SheetTrigger>
+              <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle>Welcome {auth.user?.name || ""}</SheetTitle>
+                  <SheetDescription className="text-muted-foreground">This is your personal space, and also the place where you can read the poems written for you!</SheetDescription>
+                </SheetHeader>
+                <div className="px-4 flex flex-col justify-center items-stretch gap-4">
+                  <Button
+                    onClick={() => {
+                      navigate("/");
+                      setSheetOpen(false);
+                    }}
+                    className="flex justify-between items-center"
+                  >
+                    <span>Chat</span>
+                    <MessageCircle />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      navigate("/poems");
+                      setSheetOpen(false);
+                    }}
+                    className="flex justify-between items-center"
+                  >
+                    <span>Poems</span>
+                    <BookHeart />
+                  </Button>
+                </div>
+                <SheetFooter>
+                  <Button
+                    onClick={() => {
+                      dispatch(setUser(undefined));
+                      dispatch(setAccessToken(undefined));
+                      navigate("/auth/signin");
+                    }}
+                    className="w-full"
+                    variant="destructive"
+                  >
+                    Sign Out
+                  </Button>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <div></div>
+          )}
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger className="flex items-center gap-2">
               <h3 className="p-0 m-0">{auth.user?.name}</h3>
