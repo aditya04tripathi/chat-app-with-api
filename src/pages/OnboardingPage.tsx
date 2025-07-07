@@ -35,8 +35,7 @@ const OnboardingPage = withProtectedRoute(() => {
   };
 
   useEffect(() => {
-    const checkAndSetOnboardingStatus = async () => {
-      const userResult = await checkIfOnboardingDone();
+    checkIfOnboardingDone().then((userResult) => {
       if (userResult?.message?.onboarded) {
         dispatch(setUser(userResult.message as User));
         console.log("Onboarding already done");
@@ -45,8 +44,7 @@ const OnboardingPage = withProtectedRoute(() => {
       } else {
         console.log("Onboarding not done yet");
       }
-    };
-    checkAndSetOnboardingStatus();
+    });
 
     const interval = setInterval(() => {
       checkIfOnboardingDone().then((userResult) => {
@@ -55,8 +53,6 @@ const OnboardingPage = withProtectedRoute(() => {
           console.log("Onboarding already done");
           setOnboardingDone(true);
           setCurrentTab("done");
-        } else {
-          console.log("Onboarding not done yet");
         }
       });
     }, 5000);
