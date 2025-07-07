@@ -8,7 +8,7 @@ import type { Message } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { SendHorizonal } from "lucide-react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import { toast } from "sonner";
 
@@ -22,22 +22,6 @@ export const IndexPage = withProtectedRoute(() => {
   const getMessages = useGetMessages();
 
   const [socket, setSocket] = useState<Socket | null>(null);
-  const heightOfScreenExcludingInputAndHeader = useRef<number>(0);
-
-  useLayoutEffect(() => {
-    const calculateHeight = () => {
-      const headerHeight = document.querySelector("header")?.clientHeight || 0;
-      const inputHeight = document.querySelector("form")?.clientHeight || 0;
-      heightOfScreenExcludingInputAndHeader.current = window.innerHeight - headerHeight - inputHeight;
-    };
-
-    calculateHeight();
-    window.addEventListener("resize", calculateHeight);
-
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
-  });
 
   const scrollToBottom = () => {
     scrollToBottomRef.current?.scrollToBottom();
@@ -113,13 +97,7 @@ export const IndexPage = withProtectedRoute(() => {
 
   return (
     <>
-      <ScrollArea
-        ref={scrollToBottomRef}
-        className="md:px-5 px-5 w-full overflow-y-auto"
-        style={{
-          height: heightOfScreenExcludingInputAndHeader.current || undefined,
-        }}
-      >
+      <ScrollArea ref={scrollToBottomRef} className="md:px-5 px-5 h-[calc(100vh-11.625rem)] w-full overflow-y-auto">
         <div className="container mx-auto flex flex-col gap-2">
           {messages.map((message: Message) => (
             <MessageBubble invalidateAndRefetchMessages={invalidateAndRefetchMessages} key={message.id} message={message} />
