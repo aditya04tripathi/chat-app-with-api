@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setUser } from "@/store/slices/user";
 import type { User } from "@/types";
+import { on } from "events";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -23,10 +24,13 @@ const OnboardingPage = withProtectedRoute(() => {
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
+  useEffect(() => {
+    console.log(onboardingDone);
+  }, [onboardingDone]);
+
   const checkIfOnboardingDone = async () => {
     try {
       const userResult = await getUser.mutateAsync(auth.accessToken!);
-      console.log("userResult", userResult);
       return userResult;
     } catch (error: unknown) {
       // @ts-expect-error error might not have a message property
@@ -38,13 +42,8 @@ const OnboardingPage = withProtectedRoute(() => {
     checkIfOnboardingDone().then((userResult) => {
       if (userResult?.message?.onboarded) {
         dispatch(setUser(userResult.message as User));
-        console.log("Onboarding already done");
-        setOnboardingDone(true);
-        setCurrentTab("done");
 
         navigate("/");
-      } else {
-        console.log("Onboarding not done yet");
       }
     });
 
@@ -52,9 +51,6 @@ const OnboardingPage = withProtectedRoute(() => {
       checkIfOnboardingDone().then((userResult) => {
         if (userResult?.message?.onboarded) {
           dispatch(setUser(userResult.message as User));
-          console.log("Onboarding already done");
-          setOnboardingDone(true);
-          setCurrentTab("done");
 
           navigate("/");
         }
@@ -115,8 +111,8 @@ const OnboardingPage = withProtectedRoute(() => {
               </div>
               <Input value={partnerEmail} onChange={(e) => setPartnerEmail(e.target.value)} placeholder="Enter your partner's email address" />
               <div className="absolute bottom-0 right-0 w-full flex justify-end">
-                <Button type="submit" className="w-fit h-aut aspect-square" disabled={getUser.isPending || connectPartner.isPending}>
-                  {getUser.isPending || connectPartner.isPending ? <Loader2 className="animate-spin" /> : <ChevronRight />}
+                <Button type="submit" className="w-fit h-aut aspect-square" disabled={connectPartner.isPending || onboardingDone}>
+                  {connectPartner.isPending || onboardingDone ? <Loader2 className="animate-spin" /> : <ChevronRight />}
                 </Button>
               </div>
             </form>

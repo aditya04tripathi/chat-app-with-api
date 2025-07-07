@@ -42,15 +42,6 @@ export const IndexPage = withProtectedRoute(() => {
     });
   };
 
-  const invalidateAndRefetchMessages = () => {
-    queryClient.invalidateQueries({ queryKey: ["getMessages"] });
-    handleGetMessages().then((data) => {
-      if (data) {
-        setMessages(data.message.messages as Message[]);
-      }
-    });
-  };
-
   useEffect(() => {
     connectSocket();
 
@@ -100,7 +91,7 @@ export const IndexPage = withProtectedRoute(() => {
       <ScrollArea ref={scrollToBottomRef} className="md:px-5 px-5 h-[calc(100vh-11.625rem)] w-full overflow-y-auto">
         <div className="container mx-auto flex flex-col gap-2">
           {messages.map((message: Message) => (
-            <MessageBubble invalidateAndRefetchMessages={invalidateAndRefetchMessages} key={message.id} message={message} />
+            <MessageBubble key={message.id} message={message} />
           ))}
         </div>
       </ScrollArea>
@@ -129,25 +120,9 @@ export const IndexPage = withProtectedRoute(() => {
   );
 });
 
-const MessageBubble = ({ message, invalidateAndRefetchMessages }: { message: Message; invalidateAndRefetchMessages: () => void }) => {
+const MessageBubble = ({ message }: { message: Message }) => {
   const auth = useAppSelector((state) => state.auth);
   const me = message.senderId === auth.user!.id!;
-
-  const deleteMessage = useDeleteMessage();
-
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this message?");
-    if (confirmed) {
-      const deleted = await deleteMessage.mutateAsync({ id: message.id, token: auth.accessToken! });
-      console.log(deleted);
-      if (deleted.ok) {
-        toast.success("Message deleted successfully.");
-        invalidateAndRefetchMessages();
-      } else {
-        toast.error("Failed to delete message.");
-      }
-    }
-  };
 
   return (
     <div className={clsx("w-full flex flex-col", me ? "items-end" : "items-start")}>
@@ -157,13 +132,6 @@ const MessageBubble = ({ message, invalidateAndRefetchMessages }: { message: Mes
         </div>
         <p className={clsx(me ? "text-right" : "text-left")}>{message.content}</p>
       </div>
-      {me && (
-        <div className="flex justify-end">
-          <Button onClick={handleDelete} className="text-sm text-destructive underline" variant={"link"}>
-            Delete this message
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
