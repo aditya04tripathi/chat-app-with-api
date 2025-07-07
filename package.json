@@ -11,7 +11,7 @@
     "db:dev:migrate": "prisma migrate dev --name init",
     "db:dev:ready-for-deployment": "npm run db:dev:reset && npm run db:dev:migrate && npm run db:dev:generate",
     "build": "prisma generate && nest build",
-    "build:prod": "prisma generate && nest build",
+    "build:prod": "prisma migrate dev && prisma generate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
