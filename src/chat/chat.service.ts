@@ -46,7 +46,7 @@ export class ChatService {
       };
     } catch (error: any) {
       console.error('chat.service.ts:getAllMessagesFromChatroom()', error);
-      throw new Error('Failed to retrieve messages from chatroom');
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
