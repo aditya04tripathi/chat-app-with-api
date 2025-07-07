@@ -1,5 +1,4 @@
 import {
-  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
@@ -7,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Socket, Server } from 'socket.io';
+import { Server } from 'socket.io';
 
 class ChatMessage {
   @IsString()

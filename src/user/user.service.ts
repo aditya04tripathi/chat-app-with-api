@@ -14,7 +14,7 @@ export class UserService {
       });
       if (!partner)
         throw new HttpException('Partner not found', HttpStatus.NOT_FOUND);
-      // Create Chatroom
+
       const chatroom = await this.prismaService.chatroom.create({
         data: {
           name: `✨ ${user.name} ✨ ${partner.name} ✨`,
@@ -23,7 +23,7 @@ export class UserService {
           },
         },
       });
-      // Populate chatroomId in user and partner
+
       await this.prismaService.user.update({
         where: { id: user.id },
         data: {
