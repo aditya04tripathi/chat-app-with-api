@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setUser } from "@/store/slices/user";
 import type { User } from "@/types";
 import { Check, ChevronRight, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -23,7 +23,49 @@ const OnboardingPage = withProtectedRoute(() => {
 
   const [onboardingDone, setOnboardingDone] = useState(false);
 
-  const completeOnboarding = async () => {
+  const checkIfOnboardingDone = async () => {
+    try {
+      const userResult = await getUser.mutateAsync(auth.accessToken!);
+      console.log("userResult", userResult);
+      return userResult;
+    } catch (error: unknown) {
+      // @ts-expect-error error might not have a message property
+      toast.error(error?.message || "An error occurred while checking onboarding status.");
+    }
+  };
+
+  useEffect(() => {
+    const checkAndSetOnboardingStatus = async () => {
+      const userResult = await checkIfOnboardingDone();
+      if (userResult?.message?.onboarded) {
+        dispatch(setUser(userResult.message as User));
+        console.log("Onboarding already done");
+        setOnboardingDone(true);
+        setCurrentTab("done");
+      } else {
+        console.log("Onboarding not done yet");
+      }
+    };
+    checkAndSetOnboardingStatus();
+
+    const interval = setInterval(() => {
+      checkIfOnboardingDone().then((userResult) => {
+        if (userResult?.message?.onboarded) {
+          dispatch(setUser(userResult.message as User));
+          console.log("Onboarding already done");
+          setOnboardingDone(true);
+          setCurrentTab("done");
+        } else {
+          console.log("Onboarding not done yet");
+        }
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const completeOnboarding = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!partnerEmail) {
       toast.error("Please enter your partner's email address.");
       return;
@@ -66,13 +108,7 @@ const OnboardingPage = withProtectedRoute(() => {
         </TabsList>
         <div className="border rounded-xl p-5 h-full">
           <TabsContent className="relative h-full flex flex-col gap-4 items-stretch justify-center" value="partner-details">
-            <form
-              className="h-full flex flex-col gap-4 items-stretch justify-center"
-              onClick={(e) => {
-                e.preventDefault();
-                completeOnboarding();
-              }}
-            >
+            <form className="h-full flex flex-col gap-4 items-stretch justify-center" onClick={completeOnboarding}>
               <div>
                 <h1>Tell us about your significant other</h1>
                 <p className="text-sm text-muted-foreground">Enter your partner's email address so we can connect you both ✨</p>

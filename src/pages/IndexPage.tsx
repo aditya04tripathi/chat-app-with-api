@@ -1,10 +1,11 @@
-import { useGetMessages } from "@/api/mutations";
+import { useDeleteMessage, useGetMessages } from "@/api/mutations";
 import { withProtectedRoute } from "@/components/ProtectedRoute";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea, type ScrollAreaRef } from "@/components/ui/scroll-area";
 import { useAppSelector } from "@/hooks/redux";
 import type { Message } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +17,7 @@ export const IndexPage = withProtectedRoute(() => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageContent, setMessageContent] = useState<string>("");
   const scrollToBottomRef = useRef<ScrollAreaRef>(null);
+  const queryClient = useQueryClient();
 
   const getMessages = useGetMessages();
 
@@ -37,6 +39,15 @@ export const IndexPage = withProtectedRoute(() => {
 
     socket.on("message", (msg: Message) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
+    });
+  };
+
+  const invalidateAndRefetchMessages = () => {
+    queryClient.invalidateQueries({ queryKey: ["getMessages"] });
+    handleGetMessages().then((data) => {
+      if (data) {
+        setMessages(data.message.messages as Message[]);
+      }
     });
   };
 
@@ -89,7 +100,7 @@ export const IndexPage = withProtectedRoute(() => {
       <ScrollArea ref={scrollToBottomRef} className="md:px-5 px-5 h-[calc(100vh-11.625rem)] w-full overflow-y-auto">
         <div className="container mx-auto flex flex-col gap-2">
           {messages.map((message: Message) => (
-            <MessageBubble key={message.id} message={message} />
+            <MessageBubble invalidateAndRefetchMessages={invalidateAndRefetchMessages} key={message.id} message={message} />
           ))}
         </div>
       </ScrollArea>
@@ -113,9 +124,25 @@ export const IndexPage = withProtectedRoute(() => {
   );
 });
 
-const MessageBubble = ({ message }: { message: Message }) => {
+const MessageBubble = ({ message, invalidateAndRefetchMessages }: { message: Message; invalidateAndRefetchMessages: () => void }) => {
   const auth = useAppSelector((state) => state.auth);
   const me = message.senderId === auth.user!.id!;
+
+  const deleteMessage = useDeleteMessage();
+
+  const handleDelete = async () => {
+    const confirmed = window.confirm("Are you sure you want to delete this message?");
+    if (confirmed) {
+      const deleted = await deleteMessage.mutateAsync({ id: message.id, token: auth.accessToken! });
+      console.log(deleted);
+      if (deleted.ok) {
+        toast.success("Message deleted successfully.");
+        invalidateAndRefetchMessages();
+      } else {
+        toast.error("Failed to delete message.");
+      }
+    }
+  };
 
   return (
     <div className={clsx("w-full flex flex-col", me ? "items-end" : "items-start")}>
@@ -127,8 +154,8 @@ const MessageBubble = ({ message }: { message: Message }) => {
       </div>
       {me && (
         <div className="flex justify-end">
-          <Button disabled className="text-sm text-destructive underline" variant={"link"}>
-            Delete this message (not implemented yet)
+          <Button onClick={handleDelete} className="text-sm text-destructive underline" variant={"link"}>
+            Delete this message
           </Button>
         </div>
       )}
