@@ -41,6 +41,8 @@ const OnboardingPage = withProtectedRoute(() => {
         console.log("Onboarding already done");
         setOnboardingDone(true);
         setCurrentTab("done");
+
+        navigate("/");
       } else {
         console.log("Onboarding not done yet");
       }
@@ -53,9 +55,11 @@ const OnboardingPage = withProtectedRoute(() => {
           console.log("Onboarding already done");
           setOnboardingDone(true);
           setCurrentTab("done");
+
+          navigate("/");
         }
       });
-    }, 5000);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
